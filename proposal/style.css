@@ -1,0 +1,560 @@
+/* =========================================================================
+   Nacrt 001 — Zahtjev za vezu. Inženjerski nacrt / engineering blueprint.
+   Flat ink, graph grid, mono type. NO gradients, NO glow.
+   ========================================================================= */
+
+:root {
+  --bg: #08221d;
+  --sheet: #0a2a24;
+  --ink: #dff7ec;
+  --ink-dim: rgba(223, 247, 236, 0.5);
+  --grid: rgba(170, 230, 205, 0.07);
+  --grid-major: rgba(170, 230, 205, 0.13);
+  --accent: #46e6a0;
+  --warn: #ffb14e;
+  --line: rgba(223, 247, 236, 0.85);
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.8rem, 3vw, 2rem);
+  font-family: var(--mono);
+  color: var(--ink);
+  background-color: var(--bg);
+  /* graph paper: fine grid + major lines — flat crisp lines, not a colour wash */
+  background-image: repeating-linear-gradient(
+      to right,
+      var(--grid) 0 1px,
+      transparent 1px 24px
+    ),
+    repeating-linear-gradient(to bottom, var(--grid) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(to right, var(--grid-major) 0 1px, transparent 1px 120px),
+    repeating-linear-gradient(to bottom, var(--grid-major) 0 1px, transparent 1px 120px);
+  overflow: hidden;
+}
+
+/* ---- The drawing sheet -------------------------------------------------- */
+.sheet {
+  position: relative;
+  width: min(740px, 100%);
+  background: rgba(8, 30, 26, 0.78);
+  border: 1.5px solid var(--line);
+  outline: 1px solid var(--line);
+  outline-offset: 5px;
+  padding: clamp(0.9rem, 3vw, 1.6rem);
+}
+
+/* registration corner ticks */
+.corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 0 solid var(--accent);
+}
+.corner.tl { top: -1px; left: -1px; border-top-width: 2px; border-left-width: 2px; }
+.corner.tr { top: -1px; right: -1px; border-top-width: 2px; border-right-width: 2px; }
+.corner.bl { bottom: -1px; left: -1px; border-bottom-width: 2px; border-left-width: 2px; }
+.corner.br { bottom: -1px; right: -1px; border-bottom-width: 2px; border-right-width: 2px; }
+
+.sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.4rem;
+  font-size: clamp(0.6rem, 2.3vw, 0.78rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.head-title {
+  color: var(--ink-dim);
+  text-align: center;
+  flex: 1;
+}
+.tag {
+  border: 1px solid var(--line);
+  padding: 0.18em 0.5em;
+  white-space: nowrap;
+}
+
+/* ---- Drawing area ------------------------------------------------------- */
+.drawing {
+  position: relative;
+  padding: clamp(1rem, 4vw, 2rem) clamp(0.4rem, 2vw, 1rem)
+    clamp(1.4rem, 4vw, 2rem);
+  min-height: clamp(420px, 64vh, 560px);
+}
+
+/* multi-sheet pages */
+.page {
+  display: none;
+}
+.page.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(400px, 60vh, 540px);
+  animation: pageIn 0.35s ease;
+}
+#page1 {
+  position: relative; /* anchor the scratch cover to the cover sheet */
+}
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* game sheets: center the sub-header + content (match the cover) */
+#page2,
+#page3,
+#page4 {
+  text-align: center;
+}
+#page2 > .callout-label,
+#page3 > .callout-label,
+#page4 > .callout-label {
+  margin-bottom: clamp(1rem, 4vw, 1.8rem);
+}
+
+.callout {
+  text-align: center;
+  margin-bottom: clamp(1.2rem, 4vw, 2rem);
+}
+.callout-label {
+  font-size: 0.66rem;
+  letter-spacing: 0.26em;
+  color: var(--accent);
+  margin-bottom: 0.8rem;
+}
+.question {
+  font-weight: 600;
+  font-size: clamp(1.25rem, 5.2vw, 2.1rem);
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+/* dimension line under the question */
+.dim {
+  position: relative;
+  height: 1px;
+  background: var(--line);
+  width: min(78%, 360px);
+  margin: 1.1rem auto 0;
+}
+.dim::before,
+.dim::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  width: 1px;
+  height: 9px;
+  background: var(--line);
+}
+.dim::before { left: 0; }
+.dim::after { right: 0; }
+.dim[data-dim]::after {
+  content: attr(data-dim);
+  position: absolute;
+  right: 50%;
+  top: -0.55em;
+  transform: translateX(50%);
+  width: auto;
+  height: auto;
+  background: var(--bg);
+  padding: 0 0.5em;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: var(--ink-dim);
+}
+
+/* ---- Popis dijelova (BOM) ---------------------------------------------- */
+.bom {
+  width: min(100%, 480px);
+  margin: clamp(1.2rem, 4vw, 2rem) auto 0;
+  border-collapse: collapse;
+  font-size: clamp(0.66rem, 2.6vw, 0.82rem);
+}
+.bom caption {
+  text-align: center;
+  font-size: 0.64rem;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  padding-bottom: 0.5rem;
+}
+.bom th,
+.bom td {
+  border: 1px solid var(--line);
+  padding: 0.5em 0.7em;
+  text-align: left;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.bom thead th {
+  color: var(--ink-dim);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  font-size: 0.62rem;
+}
+.bom tbody tr:nth-child(odd) td {
+  background: rgba(255, 255, 255, 0.025);
+}
+/* POZ — narrow, centered, dim */
+.bom th:nth-child(1),
+.bom td:nth-child(1) {
+  width: 2.6em;
+  text-align: center;
+  color: var(--ink-dim);
+}
+/* DIO — part name, emphasised */
+.bom td:nth-child(2) {
+  font-weight: 600;
+}
+/* KOL — narrow, centered */
+.bom th:nth-child(3),
+.bom td:nth-child(3) {
+  width: 3.4em;
+  text-align: center;
+}
+/* NAPOMENA — wide, wraps, dim */
+.bom td:nth-child(4) {
+  white-space: normal;
+  color: var(--ink-dim);
+}
+
+/* ---- Navigacija (sljedeći nacrt) --------------------------------------- */
+.nav {
+  text-align: center;
+  margin-top: clamp(1.2rem, 4vw, 1.8rem);
+}
+.btn-next {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #06241d;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 0.75em 1.4em;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s ease;
+}
+.btn-next.show {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.btn-next:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+/* ---- Assembly (drag-to-mate) ------------------------------------------- */
+.assembly-wrap {
+  text-align: center;
+}
+#assembly {
+  width: min(340px, 86%);
+  height: auto;
+  touch-action: none;
+  user-select: none;
+  overflow: visible;
+}
+#assembly .edge {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+#assembly .ghost {
+  fill: none;
+  stroke: var(--ink-dim);
+  stroke-width: 1.4;
+  stroke-dasharray: 5 5;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+/* make the WHOLE movable half grab-able (not just the outline/text) */
+#assembly .part .edge {
+  fill: transparent;
+  pointer-events: all;
+}
+#assembly .datum {
+  fill: var(--accent);
+}
+.part-label {
+  fill: var(--ink);
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-anchor: middle;
+}
+.part {
+  cursor: grab;
+}
+.part.grabbing {
+  cursor: grabbing;
+}
+.part.snapped .edge {
+  stroke: var(--accent);
+}
+.part.snapped .part-label {
+  fill: var(--accent);
+}
+/* MATE stamp appears on snap */
+.mate-stamp {
+  fill: var(--accent);
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-anchor: middle;
+  opacity: 0;
+}
+.mate-stamp.show {
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+.status {
+  margin-top: 1.1rem;
+  min-height: 2.4em;
+  font-size: clamp(0.78rem, 3vw, 0.95rem);
+  letter-spacing: 0.02em;
+  color: var(--ink-dim);
+}
+.status.warn {
+  color: var(--warn);
+}
+.status.ok {
+  color: var(--accent);
+}
+.status.flash {
+  animation: statusflash 0.32s ease;
+}
+@keyframes statusflash {
+  0% { transform: translateY(5px); opacity: 0.2; }
+  100% { transform: none; opacity: 1; }
+}
+
+/* ---- Eksplodirani sklop (NACRT 002) + Skica (NACRT 003) ---------------- */
+#gears,
+#sketch {
+  width: min(360px, 92%);
+  height: auto;
+  display: block;
+  margin: clamp(1rem, 4vw, 2rem) auto 0;
+  touch-action: none;
+  user-select: none;
+  overflow: visible;
+}
+
+/* Zupčanici (NACRT 001) */
+#gears .cog,
+#gears .hub {
+  fill: transparent; /* interior grab-able */
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  pointer-events: all;
+}
+.gear-ghost {
+  fill: none;
+  stroke: var(--ink-dim);
+  stroke-width: 1.4;
+  stroke-dasharray: 5 5;
+  vector-effect: non-scaling-stroke;
+}
+.gear { cursor: grab; }
+.gear.grabbing { cursor: grabbing; }
+.gear .cog,
+.gear .hub { transition: stroke 0.2s ease; }
+.gear.seated .cog,
+.gear.seated .hub { stroke: var(--accent); }
+
+/* Skica traktora: plave (pod-definirano) -> zelene (potpuno određeno) */
+#sketch .targets path {
+  stroke: var(--ink-dim);
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+}
+#sketch .wheel {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 0.25s ease;
+}
+#tractorFixed.defined .wheel { stroke: var(--accent); }
+.sketch-poly {
+  fill: rgba(70, 230, 160, 0.05);
+  stroke: #5b8fff;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 0.25s ease, fill 0.25s ease;
+}
+.sketch-poly.defined {
+  stroke: var(--accent);
+  fill: rgba(70, 230, 160, 0.14);
+}
+.spt {
+  fill: #5b8fff;
+  stroke: #0a2a24;
+  stroke-width: 2;
+  cursor: grab;
+  transition: fill 0.2s ease;
+}
+.spt.grabbing { cursor: grabbing; }
+.spt.locked { fill: var(--accent); }
+
+/* ---- Scratch cover sheet ----------------------------------------------- */
+.foil {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 4;
+  cursor: grab;
+  touch-action: none;
+  transition: opacity 0.55s ease;
+}
+.foil:active { cursor: grabbing; }
+.foil.done {
+  opacity: 0;
+  pointer-events: none;
+}
+.hint {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(0.6rem, 3vw, 1.2rem);
+  transform: translateX(-50%);
+  z-index: 5;
+  font-size: 0.72rem;
+  letter-spacing: 0.34em;
+  color: #06241d;
+  font-weight: 600;
+  pointer-events: none;
+  animation: hintblink 1.4s steps(1) infinite;
+}
+.hint.gone {
+  opacity: 0;
+  animation: none;
+}
+@keyframes hintblink {
+  50% { opacity: 0.4; }
+}
+
+/* ---- Finale ------------------------------------------------------------ */
+.finale-inner {
+  text-align: center;
+  padding: 1.5rem 0.5rem;
+}
+
+.finale-stamp {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: clamp(1.3rem, 6vw, 3rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  border: 3px solid var(--accent);
+  padding: 0.4em 0.7em;
+  transform: rotate(-7deg);
+  margin-bottom: 1.4rem;
+}
+.finale-line {
+  font-size: clamp(0.9rem, 3.4vw, 1.15rem);
+  color: var(--ink);
+  max-width: 28ch;
+  margin: 0 auto 1.6rem;
+}
+.btn-replay {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 0.7em 1.3em;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.btn-replay:hover {
+  background: var(--accent);
+  color: #06241d;
+  border-color: var(--accent);
+}
+
+/* ---- Title block ------------------------------------------------------- */
+.titleblock {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  border: 1px solid var(--line);
+  border-bottom: none;
+  margin-top: 0.4rem;
+}
+.tb-cell {
+  border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  padding: 0.4rem 0.55rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+.tb-cell:last-child { border-right: none; }
+.tb-cell.wide { grid-column: span 1; }
+.tb-cell .k {
+  font-size: 0.54rem;
+  letter-spacing: 0.14em;
+  color: var(--ink-dim);
+}
+.tb-cell .v {
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#tbStatus.approved {
+  color: var(--accent);
+}
+
+@media (max-width: 560px) {
+  .titleblock { grid-template-columns: 1fr 1fr; }
+  .tb-cell.wide { grid-column: span 1; }
+  .tb-cell { border-right: 1px solid var(--line); }
+  .tb-cell:nth-child(even) { border-right: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

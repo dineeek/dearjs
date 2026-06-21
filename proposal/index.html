@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="hr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Zahtjev za vezu · nacrt</title>
+    <meta name="theme-color" content="#08221d" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📐</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <main class="sheet" id="sheet">
+      <span class="corner tl"></span><span class="corner tr"></span>
+      <span class="corner bl"></span><span class="corner br"></span>
+
+      <header class="sheet-head">
+        <span class="tag" id="nacrtTag">NASLOVNICA</span>
+        <span class="head-title">ZAHTJEV ZA VEZU — SKLOP „MI"</span>
+        <span class="tag">POV.</span>
+      </header>
+
+      <section class="drawing" id="drawing">
+        <!-- ===== NASLOVNICA — pitanje + popis dijelova (pod pokrovom) ===== -->
+        <div class="page active" id="page1">
+          <div class="callout">
+            <p class="callout-label">DETALJ A · PITANJE</p>
+            <h1 class="question">Jelena, hoćeš&nbsp;li biti moja&nbsp;djevojka?</h1>
+            <div class="dim" data-dim="1×, obavezno"></div>
+          </div>
+          <table class="bom">
+            <caption>POPIS DIJELOVA</caption>
+            <thead><tr><th>POZ</th><th>DIO</th><th>KOL</th><th>NAPOMENA</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>TI</td><td>1</td><td>jedina kompatibilna 💚</td></tr>
+              <tr><td>2</td><td>JA</td><td>1</td><td>isporučeno s traktorom 🚜</td></tr>
+              <tr><td>3</td><td>STRPLJENJE</td><td>max</td><td>za moje fore 😅</td></tr>
+              <tr><td>4</td><td>BUDUĆNOST</td><td>∞</td><td>na zalihi</td></tr>
+            </tbody>
+          </table>
+          <div class="nav"><button class="btn-next" id="next1" type="button">SLJEDEĆI →</button></div>
+          <canvas id="scratch" class="foil"></canvas>
+          <p class="hint" id="hint">ZAGREBI ▦</p>
+        </div>
+
+        <!-- ===== NACRT 001 — prijenos / zupčanici ===== -->
+        <div class="page" id="page2">
+          <p class="callout-label">NACRT 001 · PRIJENOS — ZUPČANICI</p>
+          <div class="assembly-wrap">
+            <svg id="gears" viewBox="0 0 320 200" role="img" aria-label="Posloži zupčanike"></svg>
+            <p class="status" id="statusGears">Posloži zupčanike na osovine da se uhvate ⚙️</p>
+          </div>
+        </div>
+
+        <!-- ===== NACRT 002 — skica: nacrtaj traktor ===== -->
+        <div class="page" id="page3">
+          <p class="callout-label">NACRT 002 · SKICA — POTPUNO ODREĐENA</p>
+          <div class="assembly-wrap">
+            <svg id="sketch" viewBox="0 0 300 200" role="img" aria-label="Nacrtaj traktor">
+              <g class="targets">
+                <path d="M72 67 v14 M65 74 h14" />
+                <path d="M128 67 v14 M121 74 h14" />
+                <path d="M150 105 v14 M143 112 h14" />
+                <path d="M232 105 v14 M225 112 h14" />
+              </g>
+              <g id="tractorFixed">
+                <!-- veliki stražnji kotač -->
+                <circle class="wheel" cx="92" cy="150" r="40" />
+                <circle class="wheel" cx="92" cy="150" r="29" />
+                <circle class="wheel" cx="92" cy="150" r="12" />
+                <!-- mali prednji kotač -->
+                <circle class="wheel" cx="234" cy="162" r="20" />
+                <circle class="wheel" cx="234" cy="162" r="8" />
+                <!-- ispušna cijev -->
+                <rect class="wheel" x="147" y="46" width="7" height="68" rx="2" />
+                <rect class="wheel" x="143" y="41" width="15" height="7" rx="2" />
+              </g>
+              <polygon class="sketch-poly" id="sketchPoly" points="" />
+              <circle class="spt" data-tx="72" data-ty="74" cx="48" cy="48" r="9" />
+              <circle class="spt" data-tx="128" data-ty="74" cx="210" cy="50" r="9" />
+              <circle class="spt" data-tx="150" data-ty="112" cx="150" cy="42" r="9" />
+              <circle class="spt" data-tx="232" data-ty="112" cx="262" cy="176" r="9" />
+            </svg>
+            <p class="status" id="statusSketch">Povuci točke na kote i nacrtaj traktor 🚜 <span id="sketchCount">(0/4)</span></p>
+          </div>
+        </div>
+
+        <!-- ===== NACRT 003 — spoji srce (zadnji, romantični) ===== -->
+        <div class="page" id="page4">
+          <p class="callout-label">NACRT 003 · SPOJI SRCE</p>
+          <div class="assembly-wrap">
+            <svg id="assembly" viewBox="0 0 240 220" role="img" aria-label="Spoji TI i JA">
+              <path class="ghost" d="M120 70 C130 40 182 34 198 72 C212 104 168 142 120 188 L120 70 Z" />
+              <g class="fixed">
+                <path class="edge" d="M120 70 C110 40 58 34 42 72 C28 104 72 142 120 188 L120 70 Z" />
+                <text class="part-label" x="62" y="92">JA</text>
+                <circle class="datum" cx="42" cy="72" r="3" />
+              </g>
+              <g class="part" id="part" transform="translate(74,30)">
+                <path class="edge" d="M120 70 C130 40 182 34 198 72 C212 104 168 142 120 188 L120 70 Z" />
+                <text class="part-label" x="178" y="92">TI</text>
+                <circle class="datum" cx="198" cy="72" r="3" />
+              </g>
+              <text class="mate-stamp" id="mateStamp" x="120" y="118">SPOJENO ✓</text>
+            </svg>
+            <p class="status" id="statusMate">Povuci „TI" na „JA" i spoji srce 🔧</p>
+          </div>
+        </div>
+
+        <!-- ===== POTVRDA — rezultat ===== -->
+        <div class="page" id="page5">
+          <div class="finale-inner">
+            <p class="finale-stamp">SKLOP&nbsp;DOVRŠEN ✓</p>
+            <p class="finale-line">Tolerancije savršene. Spoj trajan. ⚙️💚</p>
+            <button class="btn-replay" id="replay" type="button">PONOVNO MJERENJE 🔁</button>
+          </div>
+        </div>
+      </section>
+
+      <footer class="titleblock">
+        <div class="tb-cell"><span class="k">PROJEKT</span><span class="v">NAŠA-VEZA</span></div>
+        <div class="tb-cell"><span class="k">LIST</span><span class="v" id="tbNacrt">1/5</span></div>
+        <div class="tb-cell"><span class="k">MJERILO</span><span class="v">1:1</span></div>
+        <div class="tb-cell"><span class="k">MJ. JED.</span><span class="v">❤</span></div>
+        <div class="tb-cell"><span class="k">CRTAO</span><span class="v">J. K.</span></div>
+        <div class="tb-cell wide"><span class="k">STATUS</span><span class="v" id="tbStatus">U TIJEKU</span></div>
+      </footer>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" defer></script>
+    <script src="script.js" defer></script>
+  </body>
+</html>
